@@ -3,8 +3,16 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import Index from "./pages/Index.tsx";
-import NotFound from "./pages/NotFound.tsx";
+import Layout from "./components/Layout";
+import Index from "./pages/Index";
+import Adotar from "./pages/Adotar";
+import PetDetail from "./pages/PetDetail";
+import Doar from "./pages/Doar";
+import Voluntario from "./pages/Voluntario";
+import LarTemporario from "./pages/LarTemporario";
+import Sobre from "./pages/Sobre";
+import Contato from "./pages/Contato";
+import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
@@ -14,11 +22,19 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <Layout>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/adotar" element={<Adotar />} />
+            <Route path="/adotar/:slug" element={<PetDetail />} />
+            <Route path="/doar" element={<Doar />} />
+            <Route path="/voluntario" element={<Voluntario />} />
+            <Route path="/lar-temporario" element={<LarTemporario />} />
+            <Route path="/sobre" element={<Sobre />} />
+            <Route path="/contato" element={<Contato />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Layout>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
