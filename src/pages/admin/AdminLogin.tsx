@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LogIn } from "lucide-react";
-import logo from "@/assets/amparu-logo.png";
+import logo from "@/assets/amparu-logo-2.jpg";
 
 const AdminLogin = () => {
   const [email, setEmail] = useState("");
