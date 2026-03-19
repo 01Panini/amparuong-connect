@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { Heart, Instagram, Phone, Mail, MapPin } from "lucide-react";
+import { Instagram, Phone, Mail, MapPin } from "lucide-react";
+import logo from "@/assets/amparu-logo.png";
 
 const Footer = () => {
   return (
