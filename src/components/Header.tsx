@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
-import logo from "@/assets/amparu-logo.png";
+import logo from "@/assets/amparu-logo.jpg";
 
 const navLinks = [
   { to: "/", label: "Início" },
