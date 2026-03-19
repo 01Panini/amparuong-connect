@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Heart } from "lucide-react";
+import { Menu, X } from "lucide-react";
+import logo from "@/assets/amparu-logo.png";
 
 const navLinks = [
   { to: "/", label: "Início" },
@@ -20,13 +21,8 @@ const Header = () => {
     <header className="sticky top-0 z-50 bg-card/95 backdrop-blur-md border-b border-border shadow-soft">
       <div className="section-container">
         <div className="flex items-center justify-between h-16 md:h-20">
-          <Link to="/" className="flex items-center gap-2 group">
-            <div className="w-10 h-10 rounded-full gradient-primary flex items-center justify-center">
-              <Heart className="w-5 h-5 text-primary-foreground fill-current" />
-            </div>
-            <span className="font-heading font-bold text-xl text-foreground">
-              Amparu<span className="text-primary">ONG</span>
-            </span>
+          <Link to="/" className="flex items-center group">
+            <img src={logo} alt="Amparu ONG" className="h-10 w-auto object-contain" />
           </Link>
 
           {/* Desktop nav */}
