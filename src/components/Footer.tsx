@@ -10,12 +10,7 @@ const Footer = () => {
           {/* Brand */}
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 rounded-full gradient-primary flex items-center justify-center">
-                <Heart className="w-5 h-5 text-primary-foreground fill-current" />
-              </div>
-              <span className="font-heading font-bold text-xl text-background">
-                AmparuONG
-              </span>
+              <img src={logo} alt="Amparu ONG" className="h-10 w-auto object-contain brightness-0 invert" />
             </div>
             <p className="text-sm leading-relaxed text-background/60">
               Resgatando, cuidando e encontrando lares amorosos para animais em Itumbiara-GO.
