@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getPets, addPet, updatePet } from "@/data/adminStore";
 import { Pet } from "@/data/pets";
@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Save, ArrowLeft } from "lucide-react";
+import { Save, ArrowLeft, Upload, X, ImagePlus } from "lucide-react";
 
 const emptyPet: Omit<Pet, "id" | "slug"> = {
   nome: "",
@@ -27,18 +27,63 @@ const AdminPetForm = () => {
   const isEdit = Boolean(id);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [form, setForm] = useState(emptyPet);
+  const [previews, setPreviews] = useState<string[]>([]);
+  const [isDragging, setIsDragging] = useState(false);
 
   useEffect(() => {
     if (isEdit && id) {
       const pet = getPets().find((p) => p.id === id);
-      if (pet) setForm(pet);
+      if (pet) {
+        setForm(pet);
+        setPreviews(pet.fotos || []);
+      }
     }
   }, [id, isEdit]);
 
   const handleChange = (field: string, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const processFiles = (files: FileList | File[]) => {
+    const fileArray = Array.from(files);
+    const imageFiles = fileArray.filter((f) => f.type.startsWith("image/"));
+
+    if (imageFiles.length === 0) {
+      toast({ title: "Selecione apenas arquivos de imagem.", variant: "destructive" });
+      return;
+    }
+
+    imageFiles.forEach((file) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const dataUrl = e.target?.result as string;
+        setPreviews((prev) => [...prev, dataUrl]);
+        setForm((prev) => ({ ...prev, fotos: [...(prev.fotos || []), dataUrl] }));
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) processFiles(e.target.files);
+    e.target.value = "";
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    if (e.dataTransfer.files) processFiles(e.dataTransfer.files);
+  };
+
+  const removeImage = (index: number) => {
+    setPreviews((prev) => prev.filter((_, i) => i !== index));
+    setForm((prev) => ({
+      ...prev,
+      fotos: (prev.fotos || []).filter((_, i) => i !== index),
+    }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -120,6 +165,52 @@ const AdminPetForm = () => {
             <div className="space-y-2">
               <Label>História</Label>
               <Textarea value={form.historia} onChange={(e) => handleChange("historia", e.target.value)} placeholder="Conte a história deste pet..." rows={4} />
+            </div>
+
+            {/* Image Upload */}
+            <div className="space-y-2">
+              <Label>Fotos</Label>
+              <div
+                className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
+                  isDragging
+                    ? "border-primary bg-primary/5"
+                    : "border-muted-foreground/25 hover:border-primary/50"
+                }`}
+                onClick={() => fileInputRef.current?.click()}
+                onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+                onDragLeave={() => setIsDragging(false)}
+                onDrop={handleDrop}
+              >
+                <ImagePlus className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
+                <p className="text-sm text-muted-foreground">
+                  Arraste imagens aqui ou <span className="text-primary font-medium">clique para selecionar</span>
+                </p>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  className="hidden"
+                  onChange={handleFileChange}
+                />
+              </div>
+
+              {previews.length > 0 && (
+                <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 mt-3">
+                  {previews.map((src, i) => (
+                    <div key={i} className="relative group rounded-lg overflow-hidden border border-border aspect-square">
+                      <img src={src} alt={`Foto ${i + 1}`} className="w-full h-full object-cover" />
+                      <button
+                        type="button"
+                        onClick={() => removeImage(i)}
+                        className="absolute top-1 right-1 bg-destructive text-destructive-foreground rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             <Button type="submit" size="lg" className="w-full sm:w-auto">
